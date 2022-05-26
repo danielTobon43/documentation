@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)https://imadelhanafi.com/posts/google_colal_server/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+    .utterances {
+      position: relative;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .utterances-frame {
+      color-scheme: light;
+      position: absolute;
+      left: 0;
+      right: 0;
+      width: 1px;
+      min-width: 100%;
+      max-width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+<title>Transform Google Colab to a GPU instance with full SSH access :: Imad El Hanafi — Portfolio &amp; Blog</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="Introduction Google Colab is a great service that provides free GPUs (for up to 12hours of continuous usage). It allows users to interact with a sever through a Jupyter notebook environment.
+While using Google Colab I encountered few limitations: working with a linear notebook can get messy, no good file editor and also I think Jupyter notebook is not suitable for a structured ML project/code.
+In this post I will explain how to transform Google Colab instance into a real server with SSH access (with GPU Nvidia T4) and a directory synchronised with local machine (to edit files/add datasets easily).">
+<meta name="keywords" content="Machine Learning, Deep Learning, Maths, Statistics, Imad El Hanafi, Blog">
+<meta name="robots" content="noodp">
+<link rel="canonical" href="https://imadelhanafi.com/posts/google_colal_server/">
+<link rel="stylesheet" href="./Transform Google Colab to a GPU instance with full SSH access __ Imad El Hanafi — Portfolio &amp; Blog_files/style.css">
+<link rel="stylesheet" href="./Transform Google Colab to a GPU instance with full SSH access __ Imad El Hanafi — Portfolio &amp; Blog_files/style(1).css">
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://imadelhanafi.com/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="https://imadelhanafi.com/img/favicon.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Transform Google Colab to a GPU instance with full SSH access :: Imad El Hanafi — Portfolio &amp; Blog">
+<meta name="twitter:description" content="Introduction Google Colab is a great service that provides free GPUs (for up to 12hours of continuous usage). It allows users to interact with a sever through a Jupyter notebook environment.
+While using Google Colab I encountered few limitations: working with a linear notebook can get messy, no good file editor and also I think Jupyter notebook is not suitable for a structured ML project/code.
+In this post I will explain how to transform Google Colab instance into a real server with SSH access (with GPU Nvidia T4) and a directory synchronised with local machine (to edit files/add datasets easily).">
+<meta name="twitter:site" content="https://imadelhanafi.com/">
+<meta name="twitter:creator" content="Imad">
+<meta name="twitter:image" content="https://imadelhanafi.com/img/colab_cloud.jpg">
+<meta property="og:locale" content="en">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transform Google Colab to a GPU instance with full SSH access :: Imad El Hanafi — Portfolio &amp; Blog">
+<meta property="og:description" content="Introduction Google Colab is a great service that provides free GPUs (for up to 12hours of continuous usage). It allows users to interact with a sever through a Jupyter notebook environment.
+While using Google Colab I encountered few limitations: working with a linear notebook can get messy, no good file editor and also I think Jupyter notebook is not suitable for a structured ML project/code.
+In this post I will explain how to transform Google Colab instance into a real server with SSH access (with GPU Nvidia T4) and a directory synchronised with local machine (to edit files/add datasets easily).">
+<meta property="og:url" content="https://imadelhanafi.com/posts/google_colal_server/">
+<meta property="og:site_name" content="Transform Google Colab to a GPU instance with full SSH access">
+<meta property="og:image" content="https://imadelhanafi.com/img/colab_cloud.jpg">
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+<meta property="article:published_time" content="2019-05-18 00:00:00 +0000 UTC">
+<script type="text/javascript" async="" src="./Transform Google Colab to a GPU instance with full SSH access __ Imad El Hanafi — Portfolio &amp; Blog_files/analytics.js"></script><script async="" src="./Transform Google Colab to a GPU instance with full SSH access __ Imad El Hanafi — Portfolio &amp; Blog_files/js" type="text/javascript"></script>
+<script type="text/javascript">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-140461850-1');
+</script>
+</head>
+<body class="" data-new-gr-c-s-check-loaded="14.1062.0" data-gr-ext-installed="">
+<div class="container">
+
+<div class="content">
+<div class="post">
+<h2 class="post-title"><a href="https://imadelhanafi.com/posts/google_colal_server/">Transform Google Colab to a GPU instance with full SSH access</a></h2>
+<div class="post-meta">
+<span class="post-date">
+2019-05-18
+</span>
+<span class="post-author">— Written by Imad - Updated by Daniel T. on 2022-05-26</span>
+<span class="post-read-time">— 4 min read</span>
+</div>
+
+
+<img src="./Transform Google Colab to a GPU instance with full SSH access __ Imad El Hanafi — Portfolio &amp; Blog_files/colab_cloud.jpg" class="post-cover">
+<div class="post-content">
+<tt>
+<p>
+Table of Contents
+</p><nav id="TableOfContents">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#workflow">Workflow</a>
+<ul>
+<li><a href="#step-1-start-google-colab-and-open-a-ngrok-account">Step 1: Start Google Colab and open a Ngrok account</a></li>
+<li><a href="#step-2-check-gpu-availability">Step 2: Check GPU availability</a></li>
+<li><a href="#step-3-mount-google-drive">Step 3: Mount Google Drive</a></li>
+<li><a href="#step-4-setup-ssh-forwarding">Step 4: Setup SSH forwarding</a></li>
+</ul></li>
+<li><a href="#enjoy">Enjoy!</a></li>
+</ul>
+</nav>
+<p></p>
+</tt>
+<h1 id="introduction">Introduction</h1>
+<p>Google Colab is a great service that provides free GPUs (for up to 12hours of continuous usage). It allows users to interact with a sever through a Jupyter notebook environment.</p>
+<p>While using Google Colab I encountered few limitations: working with a linear notebook can get messy, no good file editor and also I think Jupyter notebook is not suitable for a <a href="https://drivendata.github.io/cookiecutter-data-science/" target="_blank">structured ML project</a>/code.</p>
+<p>In this post I will explain how to transform Google Colab instance into a real server with SSH access (with GPU Nvidia T4) and a directory synchronised with local machine (to edit files/add datasets easily).</p>
+<h1 id="workflow">Workflow</h1>
+<p>The cover summarises steps described hereunder.</p>
+<h2 id="step-1-start-google-colab-and-open-a-ngrok-account">Step 1: Start Google Colab and open a Ngrok account</h2>
+<p>Open the following
+<a href="files/CUDA_GPU_server_">notebook</a> using your Google account. In addition to that, you will have to create an account on <a href="https://ngrok.com/">https://ngrok.com/</a> that will be used for port forwarding.</p>
+<h2 id="step-2-check-gpu-availability">Step 2: Check GPU availability</h2>
+<p>Run the following code in your notebook to check the GPU availability and nvcc version.</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python"><span class="token comment"># Check nvidia and nvcc cuda compiler</span>
+
+!nvidia<span class="token operator">-</span>smi
+!<span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>cuda<span class="token operator">/</span><span class="token builtin">bin</span><span class="token operator">/</span>nvcc <span class="token operator">-</span><span class="token operator">-</span>version
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+<p>You should be able to see information about the GPU and nvcc compiler.</p>
+<h2 id="step-3-mount-google-drive">Step 3: Mount Google Drive</h2>
+<p>Now we can link Google drive to Colab using the following script, you’ll be asked to enter an authorization code that could be obtained from the shown link.</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python"><span class="token comment"># link to google drive</span>
+
+<span class="token keyword">from</span> google<span class="token punctuation">.</span>colab <span class="token keyword">import</span> drive
+drive<span class="token punctuation">.</span>mount<span class="token punctuation">(</span><span class="token string">'/content/gdrive/'</span><span class="token punctuation">)</span>
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+<p>On the other side, on your local host, you can easily download <a href="https://www.google.com/drive/download/" target="_blank">Google drive application</a> and choose a folder to be synchronised between you laptop and google drive.
+
+  <p>For linux users <a href="https://linuxhint.com/google_drive_installation_ubuntu/">reference</a></p>
+  <code>sudo apt update && sudo apt install gnome-online-accounts</code></br></br>
+  <img src="https://linuxhint.com/wp-content/uploads/2020/08/1-2.png" alt="Girl in a jacket">
+  To add your Google Drive account, search for “Settings” in the GNOME menu.
+  <img src="https://linuxhint.com/wp-content/uploads/2020/08/2-2.png" alt="Girl in a jacket">
+  From the left panel, select “Online Accounts”. Select “Google” from the available options
+  <img src="https://linuxhint.com/wp-content/uploads/2020/08/3-2.png" alt="Girl in a jacket">
+  A tiny browser window will pop up, prompting you to log in to your Google account.
+  <img src="https://linuxhint.com/wp-content/uploads/2020/08/4-2.png" alt="Girl in a jacket">
+  Once the login is successful, GNOME will prompt for the contents to sync with your Google Drive.
+  <img src="https://linuxhint.com/wp-content/uploads/2020/08/5-2.png" alt="Girl in a jacket">
+  Voila! Google Drive is ready to go! Fire up the file manager. You can directly access the Google Drive folder. Any change made in the folder will be synced with the online storage.
+  <img src="https://linuxhint.com/wp-content/uploads/2020/08/6-2.png" alt="Girl in a jacket">
+
+Let us call it <code>ssh_files</code>.
+So up to now, <code>ssh_files</code> folder is available on Google drive, synchronised with your machine and mounted on Colab in the following path</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python"><span class="token comment">#check that Gdrive is mounted on Colab</span>
+!ls <span class="token string">'/content/gdrive/My Drive/ssh_files/'</span>
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+<p>This step can be omitted if we chose to work with Github and use it to keep track of modifications and synchronise.</p>
+<h2 id="step-4-setup-ssh-forwarding">Step 4: Setup SSH forwarding</h2>
+<p>Next step consists on using Ngrok to make ssh forwarding. We first generate a user name and a password on Google Colab and start <code>sshd</code> (refer to the Notebook for code details).</p>
+<p>After that, we can easily download Ngrok</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python"><span class="token comment"># 2 - Download Ngrok</span>
+! wget <span class="token operator">-</span>q <span class="token operator">-</span>c <span class="token operator">-</span>nc https<span class="token punctuation">:</span><span class="token operator">//</span><span class="token builtin">bin</span><span class="token punctuation">.</span>equinox<span class="token punctuation">.</span>io<span class="token operator">/</span>c<span class="token operator">/</span>4VmDzA7iaHb<span class="token operator">/</span>ngrok<span class="token operator">-</span>stable<span class="token operator">-</span>linux<span class="token operator">-</span>amd64<span class="token punctuation">.</span><span class="token builtin">zip</span>
+! unzip <span class="token operator">-</span>qq <span class="token operator">-</span>n ngrok<span class="token operator">-</span>stable<span class="token operator">-</span>linux<span class="token operator">-</span>amd64<span class="token punctuation">.</span><span class="token builtin">zip</span>
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+
+<p>Get auth key from <a href="https://dashboard.ngrok.com/get-started/your-authtoken">ngrok-auth</a> and copy it.</p>
+<img src="imgs/token.png" alt="Girl in a jacket">
+<p>Run the next cell and paste the previous auth-token in the Google colab cell. This will create a TCP tunnel.</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python"><span class="token comment"># 3 - setup Ngrok - authtoken</span>
+
+<span class="token comment">#Ask token</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Get your authtoken from https://dashboard.ngrok.com/auth"</span><span class="token punctuation">)</span>
+<span class="token keyword">import</span> getpass
+authtoken <span class="token operator">=</span> getpass<span class="token punctuation">.</span>getpass<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token comment">#Create tunnel</span>
+get_ipython<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>system_raw<span class="token punctuation">(</span><span class="token string">'./ngrok authtoken $authtoken &amp;&amp; ./ngrok tcp 22 &amp;'</span><span class="token punctuation">)</span>
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+<img src="imgs/auth.png" alt="Girl in a jacket">
+
+<p>After this step, if you go to <a href="https://dashboard.ngrok.com/status">https://dashboard.ngrok.com/status</a> you’ll be able to see something like this</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python">URL<span class="token punctuation">:</span> tcp<span class="token punctuation">:</span><span class="token operator">//</span><span class="token number">0.</span>tcp<span class="token punctuation">.</span>ngrok<span class="token punctuation">.</span>io<span class="token punctuation">:</span><span class="token number">16568</span>
+
+Client IP<span class="token punctuation">:</span> <span class="token operator">**</span><span class="token operator">*</span><span class="token punctuation">.</span><span class="token operator">**</span><span class="token operator">*</span><span class="token punctuation">.</span><span class="token operator">**</span><span class="token operator">*</span><span class="token punctuation">.</span><span class="token operator">**</span><span class="token operator">*</span>
+
+Region<span class="token punctuation">:</span> us
+
+Established<span class="token punctuation">:</span> May 17th<span class="token punctuation">,</span> <span class="token number">2019</span> <span class="token number">08</span><span class="token punctuation">:</span><span class="token number">44</span><span class="token punctuation">:</span><span class="token number">18</span> UTC
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+<img src="imgs/endpoint.png" alt="Girl in a jacket">
+
+
+<h1 id="enjoy">Enjoy!</h1>
+<p>Now you can enjoy your server through ssh, connect to it simply using next cell (remember to replaced 0. and the colored port value according to your endpoint in ngrok)</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python"><span class="token comment"># -p : the port is the same as the one shown in Ngrok status</span>
+ssh root@<span class="token number">0.</span>tcp<span class="token punctuation">.</span>ngrok<span class="token punctuation">.</span>io <span class="token operator">-</span>p <span class="token number">16568</span>
+<span class="token operator">&gt;</span> enter the password generated at the beginning of step <span class="token number">4</span>
+<span class="token comment"># if nvidia-smi is not working try: export LD_PRELOAD=/usr/lib64-nvidia/libnvidia-ml.so</span>
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+
+<p>Now run: <code>export LD_PRELOAD=/usr/lib64-nvidia/libnvidia-ml.so</code></p>
+<img src="./Transform Google Colab to a GPU instance with full SSH access __ Imad El Hanafi — Portfolio &amp; Blog_files/ssh_example.jpg" alt="Jetson Screen" class="center" style="border-radius: 8px;">
+<p>You can code locally in the directory synchronised with Google drive and execute it on the instance you’re connected to through ssh forwarding.</p>
+<hr>
+
+
+<p><em>👻 Bonus 👻</em></p>
+<p>You can even run a JupyterLab from the instance and forward it to a public URL. Run the following commands after you get connected to the instance via Ngrok.</p>
+<div class="code-toolbar"><pre class=" language-bash"><code class=" language-bash"><span class="token comment">#install tmux and jupyter lab</span>
+<span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> tmux
+pip <span class="token function">install</span> jupyter lab
+
+<span class="token comment"># open a tmux session and launch jupyterlab</span>
+tmux
+jupyter lab --ip 0.0.0.0 --no-browser --allow-root
+
+<span class="token comment"># make a split in the same session: ctrl+b then "</span>
+<span class="token comment"># create tunnel supposing that jupyter is running on 0.0.0.0:8888</span>
+<span class="token comment"># change 'myjupyter-lab' to whatever you like</span>
+<span class="token function">ssh</span> -R myjupyter-lab:80:localhost:8888 serveo.net
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+<p>In your browser go to <a href="https://myjupyter-lab.serveo.net/">https://myjupyter-lab.serveo.net</a> and enjoy full functionalities of JupyterLab from a Google Colab instance.</p>
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></html>
