@@ -21,6 +21,9 @@ Welcome! This is the official documentation for Developers
                             <a href="https://danieltobon43.github.io/documentation/google-colab-gpu-instance/Transform%20Google%20Colab%20to%20a%20GPU%20instance%20with%20full%20SSH%20access.html">Google Colab GPU instance with full SSH access</a>
                             <img src="google-colab-gpu-instance/Transform Google Colab to a GPU instance with full SSH access __ Imad El Hanafi — Portfolio & Blog_files/atom.svg" height="16" width="16" border="0" align="absmiddle" />
                         </li>
+                        <li>
+                            <a href="https://danieltobon43.github.io/documentation/convert-ipynb-to-html/index.html">Convert ipynb (Jupyter notebook) to HTML</a>                            
+                        </li>
                     </ul>
                 </div>
             </div>
