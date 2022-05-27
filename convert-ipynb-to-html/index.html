@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+        .utterances {
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 760px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .utterances-frame {
+            color-scheme: light;
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 1px;
+            min-width: 100%;
+            max-width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        </style>
+        <title>Transform Google Colab to a GPU instance with full SSH access :: Imad El Hanafi — Portfolio &amp; Blog</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Convert ipynb to html</title>
+        <link rel="stylesheet" href="./assets/styles/style.css">
+        <link rel="stylesheet" href="./assets/styles/style(1).css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="post">
+                <h2 class="post-title"><a href="/assets/imgs/bitmap.png">How to convert google colab jupyter notebook (.ipynb) to HTML</a></h2>
+                <img src="./assets/imgs/bitmap.png" class="post-cover">
+                <p>Often, we need to share our code explanations and figures written in a Google colab Jupyter notebook (.py or .ipynb files) with our friends/colleagues/bosses. The simple way is to save them as PDF files. However, PDF files are unable to load large figures or the markdown explanations.</p>      
+                <p>An alternative way is by sharing them as .html files as it’s simple in just a click away of opening the notebook, without having Python installed or colab environment.</p>
+                <p>Below are the step-by-step method on how to export your Google colab Jupyter notebook as an HTML file.</p>
+                <ol>
+                    <li>Download your colab notebook, at the top right, click File → Download → Download .ipynb</li>
+                    <img src="https://miro.medium.com/max/1022/1*gOxUhVQFerG53gwT6rbBcg.jpeg"></br>                  
+                    <li>Install jupyter-nbconvert</li>
+                    <code>apt-get install jupyter-nbconvert</code></br></br>              
+                    <li>Convert jupyter-notebook to html</li>
+                    <code>jupyter nbconvert --to html PATH/TO/YOUR-NOTEBOOK.ipynb</code></br></br>
+                    <li>Reference your notebook in your project</li>
+                    <code>tag: a href="PATH/TO/YOUR-NOTEBOOK.html">your text tag:/a</code>
+                </ol>
+            </div>
+        </div>
+    </body>
+</html>
