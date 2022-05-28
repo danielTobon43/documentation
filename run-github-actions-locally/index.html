@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+        .utterances {
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 760px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .utterances-frame {
+            color-scheme: light;
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 1px;
+            min-width: 100%;
+            max-width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        </style>
+        <title>Transform Google Colab to a GPU instance with full SSH access :: Imad El Hanafi — Portfolio &amp; Blog</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Convert ipynb to html</title>
+        <link rel="stylesheet" href="./assets/styles/style.css">
+        <link rel="stylesheet" href="./assets/styles/style(1).css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="post">
+                <h2 class="post-title"><a href="/assets/imgs/bitmap.png">Build and run GitHub Actions locally using nektos/act</a></h2>
+                <img src="./assets/imgs/bitmap.png" class="post-cover">
+                <p>For those who don’t know, GitHub Actions are GitHub’s answer to CI (Continuous Integration). Like so many other such pipeline systems, Actions are triggered by events in your Git repo, and based on the event and/or the branch(es) in question, will run a series of automated actions.</p> 
+                <ul>
+                    <li>Build my code</li>
+                    <li>Test my code</li>
+                    <li>Package my code</li>
+                    <li>Tag / version my code</li>
+                    <li>Deploy my code</li>
+                    <li>Send cute notifications to Slack when the above is done</li>
+                    <li>etc</li>
+                </ul>
+                <p><a href="https://github.com/nektos/act">nektos/act</a>, is an open source GitHub Actions emulator.</p>
+                <ul>
+                    <li>We can use nektos/act to run the actions locally instead of needing to commit/push every time we want to test out the changes we’re making to our <code>.github/workflows/</code> files (or any changes to embedded GitHub actions)</li>
+                    <li>With act, we can use the GitHub Actions defined in our <code>.github/workflows/</code> to replace the Makefile!</li>
+                    <li>act even though is not a 100% emulator of GitHub Actions but does address the majority of scenarios that we need for GitHub Actions.</li>
+                </ul>
+                <h2 id="How-Does-It-Work">How Does It Work?</h2>
+                <ul>
+                    <li>Creating and operating a container that executes the action code, act simulates the actions we want to do. Because custom/marketplace actions are simply saved in other repositories, it's up to act to grab this logic from these repositories and create a container capable of running the steps in question depending on the logic at hand.</li>
+                    <li>As a result, rather than having to wait for the aforementioned push to origin/GitHub Actions to commence, we can observe our GitHub Actions processes starting instantly with a single command line statement.</li>
+                </ul>
+                <h2 id="Installation">Installation</h2>
+                <p>act depends on docker, so you should have installed</p>
+                <p>download and install act</p>
+                <code>curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash</code>
+                <h2 id="Running">Running act</h2>
+                <p>Copy the sample content below to a test.yml file at <code>.github/workflows/</code> in your repository</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python">name: GitHub Actions Demo
+
+on: [push]
+
+jobs:
+    Explore-GitHub-Actions:
+    runs-on: ubuntu-20.04
+    steps:
+        - name: Hello World message
+        run: echo "🖥️ The workflow is running now in nektos/act."
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+                <p>Now <code>git add .github/workflows/test.yml</code> and <code>git commit</code> the test.yml file to a branch in your repository</p>
+                <p>Open a terminal and run <code>act</code> command</p>
+                <p>The first time you run <code>act</code> command will appear a prompt to choose an image size (I recommend medium size).</p>
+                <img src="./assets/imgs/act-command.png">
+                <p>The result process will be as follows</p>
+                <img src="./assets/imgs/act-hello-world.png">
+                <p>The <code>--verbose</code> flag from act does not allow you to filter log steps, but instead you can use grep and <a href="https://linux.die.net/man/1/unbuffer">unbuffered</a> command for this</p>
+                <div class="code-toolbar"><pre class=" language-python"><code class=" language-python"># Verbose running steps only
+unbuffer act --rm | grep -Ev "🐳|🚀"
+                </code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+                <img src="./assets/imgs/act-steps-only.png">
+                <p>In order to pass <code>GITHUB_TOKEN</code>, <code>SSH_KEY</code> or any other environment variable you can create a <code>.secrets</code> file and pass it as a command with the <code>--secret-file</code> flag</p>
+            </div>
+        </div>
+    </body>
+</html>
