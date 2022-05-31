@@ -27,6 +27,9 @@ Welcome! This is the official documentation for Developers
                         <li>
                             <a href="https://danieltobon43.github.io/documentation/run-github-actions-locally/index.html">Running Github Actions locally with ACT</a>                            
                         </li>
+                        <li>
+                            <a href="https://danieltobon43.github.io/documentation/run-github-pages-locally/index.html">Running Github Pages locally with Jekyll</a>                            
+                        </li>
                     </ul>
                 </div>
             </div>
