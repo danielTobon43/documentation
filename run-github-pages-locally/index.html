@@ -82,7 +82,27 @@ end</code></pre>
                         <div class="toolbar-item"><a>Copy</a></div>
                     </div>
                 </div>
-                <p>You might need to install aditional gem packages such as:</p>
+                <p>Removed duplicated header Github Pages</p>                
+                <p>I found you can customize your site CSS to hide the header by creating the file:</p>
+                <p><code>/assets/css/style.scss</code></p>
+                <div class="code-toolbar">
+                    <pre class="language-python"><code class="language-python">---
+---
+
+@import "{{ site.theme }}";
+
+header {
+    display: none;
+}</code></pre>
+                    <div class="toolbar">
+                        <div class="toolbar-item"><a>Copy</a></div>
+                    </div>
+                </div>
+                <h2 id="References">References</h2>
+                <ol>
+                    <li><a href="https://stackoverflow.com/a/46608687/16633625">https://stackoverflow.com/a/46608687/16633625</a></li>
+                    <li><a href="https://favicon.io/favicon-converter/">https://favicon.io/favicon-converter/</a></li>
+                </ol>                
             </div>
         </div>
     </body>
