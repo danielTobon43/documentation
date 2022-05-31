@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+        .utterances {
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 760px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .utterances-frame {
+            color-scheme: light;
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 1px;
+            min-width: 100%;
+            max-width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        </style>
+        <title>Github Pages Locally Jekyll</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Convert ipynb to html</title>
+        <link rel="stylesheet" href="./assets/styles/style.css">
+        <link rel="stylesheet" href="./assets/styles/style(1).css">
+        <link rel="shortcut icon" href="./assets/imgs/favicon.ico">
+    </head>
+    <body>
+        <div class="container">
+            <div class="post">
+                <h2 class="post-title"><a href="/assets/imgs/bitmap.png">Run GitHub Pages locally using Jekyll</a></h2>
+                <img src="./assets/imgs/bitmap.png" class="post-cover">
+                <p>Jekyll is a static site generator with built-in support for GitHub Pages and a simplified build process. Jekyll takes Markdown and HTML files and creates a complete static website based on your choice of layouts.</p> 
+                
+                <h2 id="Prerequisites">Prerequisites</h2>
+                <p>Before you can use Jekyll to test a site, you must:</p>
+                Install <a href="https://jekyllrb.com/docs/installation/">Jekyll</a>
+            
+                <p>We recommend using <a href="https://bundler.io/">Bundler</a> to install and run Jekyll. Bundler manages Ruby gem dependencies, reduces Jekyll build errors, and prevents environment-related bugs. To install Bundler:</p>
+
+                <p>Install Ruby. For more information, see <a href="https://www.ruby-lang.org/en/documentation/installation/">"Installing Ruby"</a> in the Ruby documentation.</p>
+                <p>Install Bundler. For more information, see <a href="https://bundler.io/">"Bundler."</a></p>
+                
+                <h2 id="Building your site locally">Building your site locally</h2>
+                <ol>
+                    <li>Open Terminal.</li>
+                    <li>Navigate to the publishing source for your site (your project)</li>
+                    <li>Download this <a href="./assets/files/Gemfile">Gemfile</a> or uses bundle to generate a new one with <code>bundle init</code></li>
+                    <div class="code-toolbar">
+                        <pre class="language-gem"><code class="language-gem"># copy this content into your Gemfile
+source 'https://rubygems.org'
+gem "jekyll-jupyter-notebook"
+gem "jekyll-paginate"
+gem "jekyll-latex"
+gem 'jekyll-seo-tag'
+gem 'jekyll-twitter-plugin'
+gem 'jekyll-theme-cayman'
+gem 'jekyll-sitemap'
+gem 'jekyll-feed'
+gem "kramdown-parser-gfm"
+gem 'jekyll-scholar', group: :jekyll_plugins
+group :jekyll_plugins do
+gem 'jekyll-commonmark-ghpages'
+end</code></pre>
+                        <div class="toolbar">
+                            <div class="toolbar-item"><a>Copy</a></div>
+                        </div>
+                    </div>
+                    <li>Run <code>bundle install</code></li>
+                    <li>Run your Jekyll site locally with <code>bundle exec jekyll serve</code></li>
+                    <li>To preview your site, in your web browser, navigate to <a href="http://localhost:4000">http://localhost:4000</a></li>
+                </ol>
+
+                <p>You might need to install aditional gem packages such as:</p>
+                <div class="code-toolbar">
+                    <pre class="language-python"><code class="language-python">sudo gem install kramdown-parser-gfm</code></pre>
+                    <div class="toolbar">
+                        <div class="toolbar-item"><a>Copy</a></div>
+                    </div>
+                </div>
+                <p>You might need to install aditional gem packages such as:</p>
+            </div>
+        </div>
+    </body>
+</html>
