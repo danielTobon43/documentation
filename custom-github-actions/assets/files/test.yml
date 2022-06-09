@@ -1,0 +1,16 @@
+name: clang-format-lint
+
+on: [push]
+
+jobs:
+  cpp-linters:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: work around permission issue
+        run: git config --global --add safe.directory /github/workspace
+      - name: set config_file env
+        run: cp $HOME/.gitconfig /github/workspace
+      - name: Clone repo with current branch
+        uses: actions/checkout@v3
+      - name: Clang-Format Linter
+        uses: yshui/git-clang-format-lint@master
