@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+        .utterances {
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 760px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .utterances-frame {
+            color-scheme: light;
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 1px;
+            min-width: 100%;
+            max-width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        </style>
+        <title>Custom Github Action</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="./assets/styles/style.css">
+        <link rel="stylesheet" href="./assets/styles/style(1).css">
+        <link rel="shortcut icon" href="./assets/imgs/favicon.ico">
+    </head>
+    <body>
+        <div class="container">
+            <div class="post">
+                <h2 class="post-title"><a href="/assets/imgs/bitmap.png">Custom GitHub Actions</a></h2>
+                <img src="./assets/imgs/bitmap.webp" class="post-cover">
+                <p>Automate, customize, and execute your software development workflows right in your repository with GitHub Actions</p> 
+                
+                <h2 id="custom-ga">Custom Github Action with pre-compiled docker image</h2>
+                <p>Actions are individual tasks that you can combine to create jobs and customize your workflow. You can create your own actions, or use and customize actions shared by the GitHub community</p>
+                
+                <p>For this example, I will create a <code>PCL-Build-Action</code> in docker to compile pcl-cmake based projects. See <a href="https://docs.github.com/en/actions/creating-actions/about-custom-actions#types-of-actions">Types of actions</a> for other types.</p>
+                This action will use a pre-compiled <a href="https://hub.docker.com/r/danieltobon43/pcl-docker">pcl-alpine-docker</a> image to execute the action. This means that the job in Github actions will pull the image from Docker Hub instead of building a custom image in the execution of the workflow. The advantage of this is that, the building process won't be in the job, making the running process faster. 
+                
+                <p>In the next section, I will run the same example, but letting Github create a custom docker image using the Dockerfile provided in the <code>PCL-Build-Action</code> repository which will be use to execute the action.</p>
+                <ol>
+                    <li>Create a Github Repository called: <a href="https://github.com/danielTobon43/PCL-Build-Action">PCL-Build-Action</a></li> 
+                    <li>Create an <code>action.yml</code> file</li>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python">name: PCL Build Action
+description: Action for building PCL-CMake project which depends on vtk-9/qt5
+author: Daniel T.
+
+inputs:
+    build_type:
+        description: "Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)"
+        default: "Release"
+        required: false
+        type: string
+
+runs:
+    using: "docker"
+    image: docker://danieltobon43/pcl-docker:1.12.1-alpine3.15-All-GA-v1
+
+# https://actions-cool.github.io/github-action-branding/
+branding:
+    icon: "package"
+    color: "gray-dark"
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+                    <li>Create a <code>README.md</code></li>
+                    <li>Save, commit and push the changes to the <code>PCL-Build-Action</code> repository</li>
+                    <li>[Optional] deploy the custom github action to the Marketplace</li>
+                </ol>
+                <h2 id="How-Does-It-Work">How Does It Work?</h2>
+                <p>A Github action is a Github repository with a <code>.yml manifest</code></p>
+                <h4 id="yml manifest">action.yml: manifest</h4>
+                Actions require a metadata file to define the inputs, outputs and main entrypoint for your action. The metadata filename must be either 'action.yml' or 'action.yaml'. For more information, see <a href="https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions">"Metadata syntax for GitHub Actions."</a>
+                <p>The first 3 lines ('name', 'description', 'author') are the metadata for this custom action. The name must be unique since there might be another github action in the marketplace with the same name.</p>
+                <p>In this example, I have defined one input called: <code>build_type</code> which is passed to the Docker container as an environment variable in the <code>entrypoint.sh</code> file.</p>
+                <p>The 'runs' section defined the type of action to be executed. In this example, I am telling to Github to use a 'docker' action with a public docker hub image called: <code>docker://danieltobon43/pcl-docker:1.12.1-alpine3.15-All-GA-v1</code>.</p>
+                You can set "image: Dockerfile" to use the provided Dockerfile in the <code>PCL-Build-Action</code> repository (see next section), but be aware that every time a new job is executed, an image from the Dockerfile will be compiled (this will cause increasing times in the job execution + possible billing fees from Github).
+                <p>The last section is 'branding', which correspond to the logo and colour for the Github Action Marketplace. See <a href="https://actions-cool.github.io/github-action-branding/">"github-action-branding"</a></p>
+            
+                <h4 id="README">README.md</h4>
+                This file will be the description of the custom action in the marketplace. In this document you explain the usage of your custom action.
+                <h2 id="Usage-pull-image">Usage</h2>
+                You must release/tag a version of your github action in your repository and then, add the following line to your ''.github/workflows/ci.yml' file in your project.
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python">steps:
+- name: Clone repository
+  uses: actions/checkout@v3
+
+- name: PCL Build Action
+  uses: danielTobon43/PCL-Build-Action@v1
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+Where 'danielTobon43' is the name of your Github account, 'PCL-Build-Action' is the name of your custom github action repository and '@v1' is the tag release.
+<p>You can tag/release your github action with:</p>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python"># How to tag source code
+git tag -a -m "PCL-Build-Action release" v1
+git push origin main --follow-tags
+
+# How to delete tag remote/local
+git tag --delete v1
+git push --delete origin v1
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+
+
+
+                <h2 id="running-dockerfile">Custom Github Action with Dockerfile</h2>
+                In this section I will run the custom github action letting Github to build a custom docker image using the provided Dockerfile in the repository. Be aware that this procedure might increase running times in the workflow since Github will need to build a new image, everytime a job is launched.
+                <ol>
+                    <li>Create a Github Repository called: <a href="https://github.com/danielTobon43/PCL-Build-Action">PCL-Build-Action</a></li> 
+                    <li>Create an <code>action.yml</code> file</li>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python">name: PCL Build Action
+description: Action for building PCL-CMake project which depends on vtk-9/qt5
+author: Daniel T.
+
+inputs:
+    build_type:
+        description: "Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)"
+        default: "Release"
+        required: false
+        type: string
+
+runs:
+    using: "docker"
+    image: "Dockerfile"
+
+# https://actions-cool.github.io/github-action-branding/
+branding:
+    icon: "package"
+    color: "gray-dark"
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+                 Notice that the selected image is "Dockerfile".   
+<li>Create a Dockerfile</li>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python">FROM danieltobon43/pcl-docker:1.12.1-alpine3.15-All-dev AS build
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+                    <li>Create an <code>entrypoint.sh</code> file</li>
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python">#!/bin/sh -l
+cmake -B `pwd`/build -DCMAKE_BUILD_TYPE=$INPUT_BUILD_TYPE
+cmake --build `pwd`/build --parallel $(nproc) --config $INPUT_BUILD_TYPE
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+                    <li>Create a <code>README.md</code></li>
+                    <li>Save, commit and push the changes to the <code>PCL-Build-Action</code> repository</li>
+                    <li>[Optional] deploy the custom github action to the Marketplace</li>
+                </ol>
+                <h2 id="How-Does-It-Work-2">How Does It Work?</h2>
+                
+                <h4 id="Dockerfile">Dockerfile</h4>
+                This file will be the action to be executed. In this example, the 'Dockefile' will create an image that executes an 'entrypoint.sh' file. The 'danieltobon43/pcl-docker:1.12.1-alpine3.15-All-dev' is the base image to be used where all pcl dependencies such us 'VTK', 'OpenG'L, 'Boost', 'Flann', 'Eigen' are compiled.
+                <p>The 'Dockerfile' itself contains the action instructions, where the "backend" will be the base image and the instructions will be given by the 'entrypoint.sh' bash script. 'Github/act' will build a new image base on this Dockerfile generally called:</p>
+                <div class="code-toolbar"><pre class=" language-python"><code class=" language-python">act-pcl-build-action-dockeraction  ...   latest  </code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+                The name will be base on the github action name. See image below for a Github example.
+                <img src="./assets/imgs/building-image.png">
+
+                <h4 id="entrypoint.sh">entrypoint.sh</h4>
+                This file is the main entrypoint to the Docker container. Will run the cmake commands to compile the project and read any 'INPUT_ARG' provided in the 'yml manifest' as an environment variable. This will be similar to have:
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python">docker run -e INPUT_BUILD_TYPE -v GITHUB_WORKSPACE act-pcl-build-action-dockeraction(NAME OF THE CUSTOM BUILT IMAGE BY GITHUB OR ACT)
+</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+                Every input defined in the yml manifest must be prefixed with <code>INPUT_</code> in the main 'entrypoint.sh' file, otherwise won't be recognized. See <a href="https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#example-specifying-inputs">"Specifying inputs".</a>
+                
+                <h2 id="running-locally">Running custom Github Action locally with nektos/act</h2>
+                <p>The Dockerfile defined in the custom action can be executed locally using <a href="https://github.com/nektos/act">nektos/act</a>. You can download the PCL Build Action repository and run the 'act' command. You will need to modify the 'yml manifest' (action.yml) in the 'PCL Build Action' repository folder to use "Dockerfile" instead. </p>
+
+The project structure to run the custom github action using the Dockerfile locally is the following:
+
+<p>More information about colored ls output see <a href="https://github.com/athityakumar/colorls">https://github.com/athityakumar/colorls</a></p>
+
+<img src="./assets/imgs/dockerfile-locally.png">
+            In this example, I have a 'pcl-visualizer' repository where I have a '.github/workflow/ci.yml' file with the following content.
+<div class="code-toolbar"><pre class=" language-python"><code class=" language-python"># ci.yml
+name: Continuous integration
+
+on:
+  push:
+    branches-ignore:
+      - documentation
+  pull_request:
+    branches-ignore:
+      - documentation
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: PCL Build Action
+        uses: ./PCL-Build-Action</code></pre><div class="toolbar"><div class="toolbar-item"><a>Copy</a></div></div></div>
+         This ci.yml is instructing Github to use the local PCL-Build-Action repository to run the action. This means, that Github/act won't pull a public docker hub image, but instead will compile a new one using the Dockerfile in the Github-Action local repository.
+        <img src="./assets/imgs/act-locally.png">
+        Note: The image above has a wrong project path. It is actually: 'danieltc at ~/Downloads/project'.
+        <p>As you see in the image above, Github/act is building a new custom image from the Dockerfile provided in the repository which is being used later to execute the action instructions.</p>
+            <h2 id="marketplace">Deploy to Marketplace</h2>
+            You can deploy your custom github action to the marketplace
+            <img src="./assets/imgs/marketplace.png">
+            You will need to tag your repository and then, release the action to the marketplace.
+            <h2 id="Note">Note</h2>
+            One thing to have in mind is that, regardless the chosen method (use a pre-compiled image or Dockerfile), a new image must be built if there are updates, modifications, or refactorizations in the action code. Also, be aware that if you are running the workflow locally with nektos/act, everytime a new workflow is executed an image is being stored with your docker images. So, everytime you modify/update your custom github action, you must delete/remove the older images since nektos/act will check if a previous image exists with the same name and then will try to pull it. This means that the new updates won't be tested since nektos/act will be pulling the older image version.
+            <img src="./assets/imgs/docker-images.png">
+            </div>
+        </div>
+    </body>
+</html>
